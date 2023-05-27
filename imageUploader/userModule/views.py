@@ -7,6 +7,8 @@ from pymongo import MongoClient
 from imageUploader import mongo
 import json
 import os
+
+import re
 from django.http import JsonResponse
 
 
@@ -33,7 +35,7 @@ def create_user(request):
     user = User(user_name=user_name, user_email=user_email,
                 user_phone=user_phone)
     try:
-        validateUser(user, profile_image)
+        validateUser(user_name, user_email, user_phone, profile_image)
     except Exception as e:
         return Response(status=400, data={'message': str(e)})
 
@@ -45,7 +47,7 @@ def create_user(request):
         'user_name': user_name,
         'user_email': user_email,
         'user_phone': user_phone,
-        'profile_image': profile_image.name
+        'profile_image': imageDirectoryPath+profile_image.name
     }
     print(document)
     my_client = mongo.MongoDbClient
@@ -53,10 +55,8 @@ def create_user(request):
     collection_name = dbname["user_data"]
     collection_name.insert_one(document)
     count = collection_name.count_documents({})
-    print(count)
-
     # Return a success response.
-    return Response({'user created successfully': True})
+    return Response({'user created successfully'})
 
 
 @api_view(['GET'])
@@ -81,20 +81,19 @@ def fetch_all(request):
     return JsonResponse(user_list, safe=False)
 
 
-def validateUser(user, profile_image):
-    print(user)
-    if (len(user.user_name) > 30 or len(user.user_name) < 10):
+def validateUser(user_name, user_email, user_phone, profile_image):
+    if (len(user_name) > 30 or len(user_name) < 10):
         raise Exception('Invalid User Name')
-    if (is_valid_email(user.user_email) is False):
+    if (is_valid_email(user_email) is False):
         raise Exception('Invalid Email Address')
-    if (is_valid_mobile(user.user_phone) is False):
+    if (is_valid_mobile(user_phone) is False):
         raise Exception('Invalid Mobile Number')
     if (is_valid_profile_image(profile_image) is False):
         raise Exception('Invalid Image Size [50 kb to 100Kb allowed]')
 
 
 def is_valid_email(email):
-    if (user.user_email is None or user.user_email == ''):
+    if (email is None or email == ''):
         return False
     match = re.match(
         r'^[a-zA-Z0-9.!#$%&\'*+\/=?^_`{|}~-]+@[a-zA-Z0-9-]+\.[a-zA-Z]+$', email)
@@ -102,18 +101,23 @@ def is_valid_email(email):
 
 
 def is_valid_mobile(mobile):
-    if (user.user_phone is None or user.user_phone == ''):
+    if (mobile is None or mobile == ''):
         return False
     match = re.match(r'^\d{10}$', mobile)
     return match is not None
 
 
 def is_valid_profile_image(profile_image):
-    if (user.profile_image is None or user.profile_image == ''):
+    print('is valid profile image')
+    if (profile_image is None):
         return False
     if profile_image is not None:
-        file_size = profile_image.content_length
-        if (file_size > 100000):  # image file size greater than 100 kb
+        # image = Image.open(profile_image)
+        file_size = profile_image.size
+        size_in_kb = file_size / 1024  # Convert to kilobytes
+        size_in_kb = int(size_in_kb)
+        print(size_in_kb)
+        if (size_in_kb < 50 or size_in_kb > 100):
             return False
         print(file_size)
     return True
