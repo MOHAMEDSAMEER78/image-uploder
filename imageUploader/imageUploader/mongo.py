@@ -10,7 +10,7 @@ MongoDbConnectionClient = MongoClient(uri, tlsCAFile=certifi.where())
 
 try:
     print("Pinging your deployment...")
-    MongoDbClient.admin.command('ping')
+    MongoDbConnectionClient.admin.command('ping')
     print("Pinged your deployment. You successfully connected to MongoDB!")
 except Exception as e:
     print(e)

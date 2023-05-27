@@ -2,5 +2,7 @@ pip install django
 pip install django pymongo django-mongodb-engine
 
 python -m pip install pymongo
+pip3 install djangorestframework
+
 
 
