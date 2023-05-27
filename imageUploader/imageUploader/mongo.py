@@ -1,6 +1,5 @@
 
 from pymongo.mongo_client import MongoClient
-from pymongo.server_api import ServerApi
 import certifi
 
 uri = "mongodb+srv://imageuploderuser:ir2DGLvLRCFKPujW@image-uploader.bioc0kh.mongodb.net/image-uploader-database?retryWrites=true&w=majority"
