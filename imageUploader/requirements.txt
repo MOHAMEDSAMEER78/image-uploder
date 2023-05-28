@@ -1,6 +1,6 @@
 pip install django
 pip install django pymongo django-mongodb-engine
 
-python -m pip install pymongo
+python3 -m pip install pymongo
 
 
