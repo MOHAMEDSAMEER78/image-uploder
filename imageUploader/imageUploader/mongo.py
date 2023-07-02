@@ -13,3 +13,9 @@ try:
     print("Pinged your deployment. You successfully connected to MongoDB!")
 except Exception as e:
     print(e)
+
+
+try:
+    print("Testing Try for Nothing is really cool now")
+except Exception as e:
+    print('test exception looks like',e)
