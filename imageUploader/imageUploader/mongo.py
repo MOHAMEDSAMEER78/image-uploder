@@ -11,6 +11,13 @@ try:
     print("Pinging your deployment...")
     MongoDbConnectionClient.admin.command('ping')
     print("Pinged your deployment. You successfully connected to MongoDB!")
+    print("Your deployment's name is: ", MongoDbConnectionClient.server_info()['sysInfo']['version'])
+    case = input("Do you want to see the list of databases? (y/n): ")
+    if case == 'y':
+        print("Here is the list of databases:")
+        print(MongoDbConnectionClient.list_database_names())
+    else:
+        print("Ok, bye!") 
 except Exception as e:
     print(e)
 
